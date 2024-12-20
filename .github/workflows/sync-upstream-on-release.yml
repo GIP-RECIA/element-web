@@ -1,0 +1,53 @@
+name: Sync Upstream on Release
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/element-hq/element-web.git
+
+      - name: Fetch upstream
+        run: git fetch upstream --tags
+
+      - name: Get latest upstream tag
+        id: latest
+        run: |
+            # liste les tags qui respectent strictement vX.Y.Z
+            TAG=$(git tag -l "v[0-9]*.[0-9]*.[0-9]*" --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Sync master with upstream/master
+        run: |
+            git checkout origin/master
+            git checkout -B master origin/master
+            git merge upstream/master
+            git push origin master
+
+      - name: Check if recia tag already exists
+        id: checktag
+        run: |
+            if git ls-remote --tags origin | grep -q "refs/tags/${{ steps.latest.outputs.tag }}-recia$"; then
+              echo "exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "exists=false" >> $GITHUB_OUTPUT
+            fi
+
+      - name: Trigger rebase+tag workflow
+        if: steps.checktag.outputs.exists == 'false'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+            workflow: "Rebase and Tag Recia"
+            ref: recia
+            inputs: '{"version": "${{ steps.latest.outputs.tag }}"}'
