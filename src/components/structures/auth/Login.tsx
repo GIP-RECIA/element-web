@@ -414,7 +414,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
         if (!this.state.flows) return null;
 
         // this is the ideal order we want to show the flows in
-        const order = ["oidcNativeFlow", "m.login.password", "m.login.sso"];
+        const order = ["oidcNativeFlow", "m.login.sso", "m.login.password"];
 
         const flows = filterBoolean(order.map((type) => this.state.flows?.find((flow) => flow.type === type)));
         return (
@@ -471,15 +471,23 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
         const flow = this.state.flows?.find((flow) => flow.type === "m.login." + loginType) as SSOFlow;
 
         return (
-            <SSOButtons
-                matrixClient={this.loginLogic.createTemporaryClient()}
-                flow={flow}
-                loginType={loginType}
-                fragmentAfterLogin={this.props.fragmentAfterLogin}
-                primary={!this.state.flows?.find((flow) => flow.type === "m.login.password")}
-                action={SSOAction.LOGIN}
-                disabled={this.isBusy()}
-            />
+            <React.Fragment>
+                <SSOButtons
+                    matrixClient={this.loginLogic.createTemporaryClient()}
+                    flow={flow}
+                    loginType={loginType}
+                    fragmentAfterLogin={this.props.fragmentAfterLogin}
+                    primary={!this.state.flows?.find((flow) => flow.type === "m.login.password")}
+                    action={SSOAction.LOGIN}
+                    disabled={this.isBusy()}
+                />
+                  <h2 className="mx_AuthBody_centered">
+                    {_t("auth|sso_or_username_password", {
+                        ssoButtons: "",
+                        usernamePassword: "",
+                    }).trim()}
+                </h2>
+            </React.Fragment>
         );
     };
 
