@@ -79,7 +79,7 @@
         "wrap-ansi": "npm:wrap-ansi@^7.0.0"
     },
     "dependencies": {
-        "@babel/runtime": "^7.12.5",
+        "@babel/runtime": "^7.27.0",
         "@element-hq/element-web-module-api": "^0.1.1",
         "@fontsource/inconsolata": "^5",
         "@fontsource/inter": "^5",
@@ -175,7 +175,7 @@
         "@babel/preset-env": "^7.12.11",
         "@babel/preset-react": "^7.12.10",
         "@babel/preset-typescript": "^7.12.7",
-        "@babel/runtime": "^7.12.5",
+        "@babel/runtime": "^7.27.0",
         "@casualbot/jest-sonar-reporter": "2.2.7",
         "@element-hq/element-web-playwright-common": "^1.1.5",
         "@peculiar/webcrypto": "^1.4.3",
