@@ -33,6 +33,7 @@ jobs:
             git checkout origin/master
             git checkout -B master origin/master
             git merge upstream/master
+            git push origin master
 
       - name: Check if recia tag already exists
         id: checktag
